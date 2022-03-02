@@ -17,6 +17,8 @@ import (
 
 var TimeFunc = time.Now
 
+const ClockSkewSeconds = 10
+
 // MapClaims provides backwards compatible validations not available in `go-jose`.
 // It was taken from [here](https://raw.githubusercontent.com/form3tech-oss/jwt-go/master/map_claims.go).
 //
@@ -166,14 +168,14 @@ func verifyExp(exp int64, now int64, required bool) bool {
 	if exp == 0 {
 		return !required
 	}
-	return now <= exp
+	return now <= exp + ClockSkewSeconds
 }
 
 func verifyIat(iat int64, now int64, required bool) bool {
 	if iat == 0 {
 		return !required
 	}
-	return now >= iat
+	return now >= iat - ClockSkewSeconds
 }
 
 func verifyIss(iss string, cmp string, required bool) bool {
@@ -191,5 +193,5 @@ func verifyNbf(nbf int64, now int64, required bool) bool {
 	if nbf == 0 {
 		return !required
 	}
-	return now >= nbf
+	return now >= nbf - ClockSkewSeconds
 }
